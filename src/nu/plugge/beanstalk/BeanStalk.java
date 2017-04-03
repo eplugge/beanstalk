@@ -1,4 +1,4 @@
-package nu.plugge.beanstalk
+package nu.plugge.beanstalk;
 
 import java.io.File;
 import java.io.IOException;
