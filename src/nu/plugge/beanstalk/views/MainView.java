@@ -5,14 +5,25 @@
  */
 package nu.plugge.beanstalk.views;
 
-import javafx.geometry.HPos;
+import javafx.scene.text.Font;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.geometry.HPos;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
+import nu.plugge.beanstalk.models.InvestModel;
 
 /**
  *
@@ -21,46 +32,146 @@ import javafx.stage.Stage;
 public class MainView {
     String version =  "0.0.1 alpha";
     Stage stage = new Stage();
+    TextField tfInput;
+    TableView investTable;
     
     /* Constructor method */
     public MainView() {
+        /* Define Column Constraints */
+        ColumnConstraints rootCC10, rootCC80;
+        rootCC10 = new ColumnConstraints();
+        rootCC10.setPercentWidth(5);
+        rootCC80 = new ColumnConstraints();
+        rootCC80.setPercentWidth(90);
+        
+        /* Define Row Constraints */
+        RowConstraints rootRC5, rootRC35, rootRC55;
+        rootRC5 = new RowConstraints();
+        rootRC5.setPercentHeight(5);
+        rootRC35 = new RowConstraints();
+        rootRC35.setPercentHeight(35);
+        rootRC55 = new RowConstraints();
+        rootRC55.setPercentHeight(55);
+        
+        /* Initialize gridpane objects */
         GridPane rootPane, inputPane, holdingsPane;
         rootPane = new GridPane();
         inputPane = new GridPane();
         holdingsPane = new GridPane();
-        
+
         /* Define root pane properties */
         rootPane.setAlignment(Pos.CENTER);
         rootPane.setGridLinesVisible(true);
-        rootPane.setVgap(20);
-        rootPane.setHgap(20);
+        rootPane.setVgap(10);
+        rootPane.setHgap(10);
         
-        ColumnConstraints inputColumn = new ColumnConstraints();
-        inputColumn.setPercentWidth(100);
-        ColumnConstraints holdingsColumn = new ColumnConstraints();
-        holdingsColumn.setPercentWidth(100);
-        rootPane.getColumnConstraints().addAll(inputColumn,holdingsColumn);
+        /* Define root pane layout */
+        rootPane.getRowConstraints().addAll(rootRC5,rootRC55,rootRC35,rootRC5);
+        rootPane.getColumnConstraints().addAll(rootCC10,rootCC80,rootCC10);
         
-        /* Establish the input pane, to be added as a child to rootPane */
-        Label lblToSpend = new Label("I'd like to spend:");
-        TextField tfSpendInput = new TextField();        
+        /* Input Pane
+        *   This pane is used to hold the calculator-part of the app.
+        *   Pane will be positioned on top, and will be a child of the root
+        *   pane.
+        */
         
+        /* Define input pane properties */
+        inputPane.setGridLinesVisible(true);        
         
-        inputPane.add(lblToSpend,0,0);
-        inputPane.add(tfSpendInput,0,1);
+        /* Define Constraints */
+        ColumnConstraints inputCC100 = new ColumnConstraints();
+        inputCC100.setPercentWidth(100);
+        RowConstraints inputRC5, inputRC10, inputRC20, inputRC30, inputRC40, inputRC50;
+        inputRC5 = new RowConstraints();
+        inputRC5.setPercentHeight(5);
+        inputRC10 = new RowConstraints();
+        inputRC10.setPercentHeight(10);        
+        inputRC20 = new RowConstraints();
+        inputRC20.setPercentHeight(20);
+        inputRC30 = new RowConstraints();
+        inputRC30.setPercentHeight(30);        
+        inputRC40 = new RowConstraints();
+        inputRC40.setPercentHeight(40);        
+        inputRC50 = new RowConstraints();
+        inputRC50.setPercentHeight(50);
+        
+        /* Define input pane layout */
+        inputPane.getRowConstraints().addAll(inputRC20,inputRC20,inputRC10,inputRC40);
+        inputPane.getColumnConstraints().addAll(inputCC100);
+        
+        /* Define input pane objects */
+        Label lblToInvest = new Label("I'd like to invest the following amount");
+        Label lblStockToBuy = new Label("I'd like to buy the following stock");
+        Label lblPercentageWish = new Label("This should cover this many percent of my investment");
+        Label lblShouldRebalance = new Label("I'd like to rebalance my existing portfolio");
+        tfInput = new TextField();
+        investTable = new TableView();
+        TableColumn investTableSymbol, investTablePercentage, investTableCorrectExisting, investTableShares;
+        
+        /* Define invest table data */ 
+        investTableSymbol = new TableColumn("Symbol");
+        investTablePercentage = new TableColumn("Percentage");
+        investTableCorrectExisting = new TableColumn("Rebalance");
+        investTableShares = new TableColumn("Shares to Buy");
+        investTable.getColumns().addAll(investTableSymbol,investTablePercentage,investTableCorrectExisting, investTableShares);
+        
+        /* Style input pane's objects */
+        lblToInvest.setAlignment(Pos.CENTER);
+        lblToInvest.setMaxWidth(Double.MAX_VALUE);
+        lblToInvest.setFont(new Font("Arial", 20));        
+        tfInput.setMaxWidth(Double.MAX_VALUE);
+        tfInput.setMaxHeight(Double.MAX_VALUE);
+        tfInput.setFont(new Font("Arial", 40)); 
+        tfInput.setAlignment(Pos.CENTER);
+        investTable.setEditable(true);
+  
+        inputPane.add(lblToInvest,0,0,1,1);
+        inputPane.add(tfInput,0,1,1,1);
+        inputPane.add(investTable,0,3,1,1);
         
 
+        /* Holdings Pane
+        *   This pane is used to hold the current stock holdings of the user.
+        *   Pane will be positioned at the bottom, and will be a child of the root
+        *   pane.
+        */        
+        Label lblPortfolio = new Label("Portfolio Overview");
+        TableView holdingsTable = new TableView();
+        TableColumn holdingsTableSymbol, holdingsTableNoShares,holdingsTableInvestment,holdingsTableNoTrades,holdingsTablePercentage;
+        holdingsTableSymbol = new TableColumn("Symbol");
+        holdingsTableNoShares = new TableColumn("No. Shares");
+        holdingsTableInvestment = new TableColumn("Invested");
+        holdingsTableNoTrades = new TableColumn("Trades");
+        holdingsTablePercentage = new TableColumn("%");
+        holdingsTable.getColumns().addAll(holdingsTableSymbol,holdingsTableNoShares,holdingsTablePercentage);
         
-        
-        
+        holdingsPane.add(lblPortfolio,0,0,1,1);
+        holdingsPane.add(holdingsTable,0,1,1,1);
         
         /* Construct the scene */
-        rootPane.add(inputPane,0,0);
-        rootPane.add(holdingsPane,0,1);
+        rootPane.add(inputPane,1,1);
+        rootPane.add(holdingsPane,1,2);
         
         Scene mainScene = new Scene(rootPane,500,700);
         stage.setScene(mainScene);
         stage.setTitle("BeanStalk "+version);
         stage.show();
+    }
+    
+    public Double getInvest() {
+        double val = Double.parseDouble(tfInput.getText());
+        System.out.println("Investing " + val + " something something ");
+        return val;
+    }
+
+    public void setTfInputListener(ActionListener a) {
+        tfInput.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    // do something
+                }
+            }
+        }
     }
 }

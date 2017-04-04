@@ -5,6 +5,8 @@
  */
 package nu.plugge.beanstalk.controllers;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import nu.plugge.beanstalk.models.MainModel;
 import nu.plugge.beanstalk.views.MainView;
 
@@ -19,6 +21,8 @@ public class MainController {
     public MainController(MainModel mM, MainView mV) {
         this.m = mM;
         this.v = mV;
+        
+        v.setTfInputHandler
         
     }
 }
