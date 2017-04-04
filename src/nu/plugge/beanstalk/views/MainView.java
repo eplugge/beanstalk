@@ -32,8 +32,10 @@ import nu.plugge.beanstalk.models.InvestModel;
 public class MainView {
     String version =  "0.0.1 alpha";
     Stage stage = new Stage();
+    Label lblStatus;
     TextField tfInput;
     TableView investTable;
+    int calcStage = 0;
     
     /* Constructor method */
     public MainView() {
@@ -100,10 +102,7 @@ public class MainView {
         inputPane.getColumnConstraints().addAll(inputCC100);
         
         /* Define input pane objects */
-        Label lblToInvest = new Label("I'd like to invest the following amount");
-        Label lblStockToBuy = new Label("I'd like to buy the following stock");
-        Label lblPercentageWish = new Label("This should cover this many percent of my investment");
-        Label lblShouldRebalance = new Label("I'd like to rebalance my existing portfolio");
+        lblStatus = new Label();
         tfInput = new TextField();
         investTable = new TableView();
         TableColumn investTableSymbol, investTablePercentage, investTableCorrectExisting, investTableShares;
@@ -116,16 +115,16 @@ public class MainView {
         investTable.getColumns().addAll(investTableSymbol,investTablePercentage,investTableCorrectExisting, investTableShares);
         
         /* Style input pane's objects */
-        lblToInvest.setAlignment(Pos.CENTER);
-        lblToInvest.setMaxWidth(Double.MAX_VALUE);
-        lblToInvest.setFont(new Font("Arial", 20));        
+        lblStatus.setAlignment(Pos.CENTER);
+        lblStatus.setMaxWidth(Double.MAX_VALUE);
+        lblStatus.setFont(new Font("Arial", 20));        
         tfInput.setMaxWidth(Double.MAX_VALUE);
         tfInput.setMaxHeight(Double.MAX_VALUE);
         tfInput.setFont(new Font("Arial", 40)); 
         tfInput.setAlignment(Pos.CENTER);
         investTable.setEditable(true);
   
-        inputPane.add(lblToInvest,0,0,1,1);
+        inputPane.add(lblStatus,0,0,1,1);
         inputPane.add(tfInput,0,1,1,1);
         inputPane.add(investTable,0,3,1,1);
         
@@ -157,21 +156,29 @@ public class MainView {
         stage.setTitle("BeanStalk "+version);
         stage.show();
     }
+
+    public void setlblStatus(String s) {
+        lblStatus.setText(s);
+    }
     
-    public Double getInvest() {
-        double val = Double.parseDouble(tfInput.getText());
-        System.out.println("Investing " + val + " something something ");
-        return val;
+    public String getTfInput(){
+        return tfInput.getText();
+    }       
+    
+    public void setTfInput(String s){
+        tfInput.setText(s);
     }
 
-    public void setTfInputListener(ActionListener a) {
-        tfInput.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.ENTER)) {
-                    // do something
-                }
-            }
-        }
+    public void setTfKeyHandler(EventHandler<KeyEvent> e) {
+        tfInput.setOnKeyPressed(e);
     }
+    
+    public void setCalcStage(int i){
+        calcStage=i;
+    }
+    
+    public int getCalcStage(){
+        return calcStage;
+    }
+            
 }
