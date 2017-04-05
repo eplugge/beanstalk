@@ -5,25 +5,22 @@
  */
 package nu.plugge.beanstalk.views;
 
-import javafx.scene.text.Font;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.text.Font;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.geometry.HPos;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import nu.plugge.beanstalk.models.InvestModel;
+import nu.plugge.beanstalk.models.MainModel;
 
 /**
  *
@@ -114,6 +111,11 @@ public class MainView {
         investTableShares = new TableColumn("Shares to Buy");
         investTable.getColumns().addAll(investTableSymbol,investTablePercentage,investTableCorrectExisting, investTableShares);
         
+        investTableSymbol.setCellValueFactory(new PropertyValueFactory<MainModel, String>("symbol"));
+        investTablePercentage.setCellValueFactory(new PropertyValueFactory<MainModel, Double>("percentage"));
+        investTableCorrectExisting.setCellValueFactory(new PropertyValueFactory<MainModel, Boolean>("rebalance"));
+        
+        
         /* Style input pane's objects */
         lblStatus.setAlignment(Pos.CENTER);
         lblStatus.setMaxWidth(Double.MAX_VALUE);
@@ -157,7 +159,21 @@ public class MainView {
         stage.show();
     }
 
-    public void setlblStatus(String s) {
+    
+    public void setlblStatus(int i) {
+        switch(i) {
+            case 0: lblStatus.setText("I'd like to invest the following amount");
+                break;
+            case 1: lblStatus.setText("I'd like to purchase the following shares");
+                break;
+            case 2: lblStatus.setText("I'd like to invest the following percentage of my investment");
+                break;
+            case 3: lblStatus.setText("I'd like to rebalance my portfolio");
+                break;
+        }         
+    }
+    
+    public void setlblException(String s){
         lblStatus.setText(s);
     }
     
@@ -180,5 +196,10 @@ public class MainView {
     public int getCalcStage(){
         return calcStage;
     }
+    
+    public void setTable(ObservableList<MainModel> l){
+        investTable.setItems(l);
+        investTable.refresh();
+    }   
             
 }
