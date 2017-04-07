@@ -7,10 +7,13 @@ package nu.plugge.beanstalk.models;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import nu.plugge.beanstalk.lib.*;
 
 
 /**
@@ -22,17 +25,20 @@ public class MainModel {
     private StringProperty symbol;
     private DoubleProperty percentage;
     private BooleanProperty rebalance;
+    private IntegerProperty toBuy;
+    private Stock stock;
     
     /* Constructors */
     public MainModel() {  
         this(0.0,"BND",0.0,false);
-    }
-    
+    }            
+            
     public MainModel(Double i, String s, Double p, Boolean r) {
         this.investAmount = new SimpleDoubleProperty(i);
         this.symbol = new SimpleStringProperty(s);
         this.percentage = new SimpleDoubleProperty(p);
         this.rebalance = new SimpleBooleanProperty(r);
+        stock = StockFetcher.getStock(s);
     }
     
     public Double getInvestAmount(){
@@ -61,7 +67,15 @@ public class MainModel {
     }
     public Double calcInvestmentInCurrency(){
         Double res = (this.investAmount.get() / 100.00) * this.percentage.get();
-        //
         return res;
+    }
+    public String getStockName(){
+        return stock.getName();
+    }
+    
+    private void calcStocksToBuy(){
+        Double cashToSpend = calcInvestmentInCurrency();
+        Double stockPrice = stock.getPrice();
+        this.toBuy = new SimpleIntegerProperty((int) Math.round(cashToSpend/stockPrice));
     }
 }

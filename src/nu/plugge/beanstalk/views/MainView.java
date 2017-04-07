@@ -114,6 +114,7 @@ public class MainView {
         investTableSymbol.setCellValueFactory(new PropertyValueFactory<MainModel, String>("symbol"));
         investTablePercentage.setCellValueFactory(new PropertyValueFactory<MainModel, Double>("percentage"));
         investTableCorrectExisting.setCellValueFactory(new PropertyValueFactory<MainModel, Boolean>("rebalance"));
+        investTableSymbol.setCellValueFactory(new PropertyValueFactory<MainModel, Integer>("toBuy"));
         
         
         /* Style input pane's objects */

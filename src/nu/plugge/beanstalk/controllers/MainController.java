@@ -10,6 +10,9 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import nu.plugge.beanstalk.lib.Stock;
+import nu.plugge.beanstalk.lib.StockFetcher;
+import nu.plugge.beanstalk.lib.StockHelper;
 import nu.plugge.beanstalk.models.MainModel;
 import nu.plugge.beanstalk.views.MainView;
 
@@ -45,14 +48,18 @@ public class MainController {
                             break;
                         case 1:
                             m.setSymbol(v.getTfInput());
+                            System.out.println("Stock is: " + m.getStockName());
+                            if(m.getStockName().equals("N/A")) {
+                                v.setlblException("Not a recognized symbol");
+                                return;
+                            }
                             v.setCalcStage(v.getCalcStage()+1);
                             v.setlblStatus(v.getCalcStage());
                             v.setTfInput("");                            
                             break;
                         case 2:
                             if(totalPercentage + (Double.parseDouble(v.getTfInput())) > 100.0) {
-                                System.out.println("Investing " + totalPercentage);
-                                v.setlblException("You can't invest over 100%, silly.");
+                                v.setlblException("You can't invest over 100%");
                                 v.setTfInput("");
                             } else {
                                 totalPercentage += Double.parseDouble(v.getTfInput());
@@ -71,8 +78,6 @@ public class MainController {
                             }else{
                                 v.setCalcStage(0);
                                 totalPercentage=0.0;
-                                /* We're done */
-                                // implement api handling http://finance.yahoo.com/d/quotes.csv?s=BND&f=o
                             }
                             v.setlblStatus(v.getCalcStage());
                             v.setTfInput("");
