@@ -48,7 +48,6 @@ public class MainController {
                             break;
                         case 1:
                             m.setSymbol(v.getTfInput());
-                            System.out.println("Stock is: " + m.getStockName());
                             if(m.getStockName().equals("N/A")) {
                                 v.setlblException("Not a recognized symbol");
                                 return;
@@ -64,6 +63,7 @@ public class MainController {
                             } else {
                                 totalPercentage += Double.parseDouble(v.getTfInput());
                                 m.setPercentage(Double.parseDouble(v.getTfInput()));
+                                m.calcStocksToBuy();
                                 v.setCalcStage(v.getCalcStage()+1);
                                 v.setlblStatus(v.getCalcStage());
                                 v.setTfInput("");

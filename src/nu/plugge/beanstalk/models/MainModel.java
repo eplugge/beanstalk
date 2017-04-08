@@ -21,16 +21,17 @@ import nu.plugge.beanstalk.lib.*;
  * @author eelco
  */
 public class MainModel {
-    private DoubleProperty investAmount;
-    private StringProperty symbol;
-    private DoubleProperty percentage;
-    private BooleanProperty rebalance;
-    private IntegerProperty toBuy;
+    private DoubleProperty investAmount = new SimpleDoubleProperty();
+    private StringProperty symbol = new SimpleStringProperty();
+    private DoubleProperty percentage = new SimpleDoubleProperty();
+    private BooleanProperty rebalance = new SimpleBooleanProperty();
+    private IntegerProperty toBuy = new SimpleIntegerProperty();
     private Stock stock;
     
     /* Constructors */
     public MainModel() {  
-        this(0.0,"BND",0.0,false);
+        //this(0.0,"BND",0.0,false);
+        //this.investAmount
     }            
             
     public MainModel(Double i, String s, Double p, Boolean r) {
@@ -47,6 +48,9 @@ public class MainModel {
     public String getSymbol(){
         return symbol.get();
     }
+    public Integer getToBuy(){
+        return toBuy.get();
+    }
     public Double getPercentage(){
         return percentage.get();
     }
@@ -58,6 +62,7 @@ public class MainModel {
     }
     public void setSymbol(String s){
         symbol.set(s);
+        stock = StockFetcher.getStock(symbol.get());
     }
     public void setPercentage(Double d){
         percentage.set(d);
@@ -73,9 +78,14 @@ public class MainModel {
         return stock.getName();
     }
     
-    private void calcStocksToBuy(){
+    public void calcStocksToBuy(){
         Double cashToSpend = calcInvestmentInCurrency();
         Double stockPrice = stock.getPrice();
-        this.toBuy = new SimpleIntegerProperty((int) Math.round(cashToSpend/stockPrice));
+        int res = (int) Math.round(cashToSpend/stockPrice);
+        toBuy.set(res);
+        //this.toBuy = new SimpleIntegerProperty((int) Math.round(cashToSpend/stockPrice));
+        System.out.println("Called! " + res);
     }
+    
+    
 }
